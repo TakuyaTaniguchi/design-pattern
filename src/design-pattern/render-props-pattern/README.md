@@ -1,1 +1,1 @@
-# design-patterns
+# render-props-pattern
