@@ -50,6 +50,54 @@ const ProductDisplay = ({ product }) => {
 };
 ```
 
+### 別解
+
+```tsx
+const Tabs = ({ children }) => {
+  return <div className="border p-4">{children}</div>;
+};
+
+const TabList = ({ children }) => {
+  return <div className="flex space-x-2">{children}</div>;
+};
+
+const Tab = ({ label, onClick, isActive }) => {
+  return (
+    <button
+      className={`p-2 border-b-2 ${isActive ? "border-blue-500" : "border-transparent"}`}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  );
+};
+
+const TabPanels = ({ children, activeIndex }) => {
+  return <div className="p-4">{children[activeIndex]}</div>;
+};
+
+// 使用例
+const App = () => {
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  return (
+    <Tabs>
+      <TabList>
+        <Tab label="タブ1" onClick={() => setActiveIndex(0)} isActive={activeIndex === 0} />
+        <Tab label="タブ2" onClick={() => setActiveIndex(1)} isActive={activeIndex === 1} />
+      </TabList>
+      <TabPanels activeIndex={activeIndex}>
+        <div>タブ1のコンテンツ</div>
+        <div>タブ2のコンテンツ</div>
+      </TabPanels>
+    </Tabs>
+  );
+};
+
+export default App;
+
+```
+
 ## メリット
 - **コードの再利用性**: 同じコンポーネントを様々な文脈で再利用できる
 - **保守性の向上**: 各コンポーネントが単一の責任を持つため、変更の影響範囲が限定される
