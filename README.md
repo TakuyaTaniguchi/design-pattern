@@ -1,49 +1,164 @@
-# Getting Started with Create React App
+# React 設計パターン & テクニックコレクション
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+このリポジトリは、React開発における実践的な設計パターンとテクニックを集めたものです。各パターンには使用例、メリット・デメリット、そして実際のビジネスシーンでの活用方法が含まれています。
 
-## Available Scripts
+## 対象読者
 
-In the project directory, you can run:
+このリポジトリは、Reactの基本を理解している中級〜上級者を対象としています。各パターンはFunctional Componentsを中心に説明していますが、必要に応じてClassコンポーネントの例も提供しています。
 
-### `npm start`
+## パターン・テクニック一覧
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. [Compound Components](#compound-components)
+2. [Component Composition](#component-composition)
+3. [Render Props](#render-props)
+4. [Custom Hooks](#custom-hooks)
+5. [Context + Reducer](#context-reducer)
+6. [Container/Presentational](#container-presentational)
+7. [Higher-Order Components (HOC)](#higher-order-components)
+8. [React Portal](#react-portal)
+9. [State Machines](#state-machines)
+10. [Controlled vs Uncontrolled Components](#controlled-uncontrolled)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## パターン比較表
 
-### `npm test`
+### 🔄 Component Composition と Compound Components の違い
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| 特徴 | Component Composition | Compound Components |
+|------|---------------------|---------------------|
+| 目的 | コンポーネントの組み合わせを柔軟にする | 親コンポーネントと密接に関連する子コンポーネントを直感的に使う |
+| データの受け渡し | `props`（主に `children`）を使用 | `Context API` を活用することが多い |
+| 構造 | シンプルで汎用的 | 親コンポーネントが子コンポーネントを統括する |
+| 適用例 | レイアウトや汎用的なコンポーネント<br>（Card, Modal, Layout） | タブ・アコーディオン・フォーム・メニューなどのUIパターン |
+| コードの可読性 | `props` で自由に組み合わせるので汎用的 | HTML に近い直感的な構造 |
 
-### `npm run build`
+### 🔄 Render Props と HOC (Higher-Order Components) の違い
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| 特徴 | Render Props | HOC (Higher-Order Components) |
+|------|-------------|------------------------------|
+| 実装方法 | 関数をプロップとして渡す | コンポーネントをラップする関数 |
+| データ共有 | レンダリング時に動的にデータを提供 | ラップされたコンポーネントにプロップを注入 |
+| 合成 | ネストによる組み合わせ（潜在的なネスト地獄） | 関数合成による組み合わせ |
+| デバッグ | 追跡が比較的容易 | プロップのソースがわかりにくい場合がある |
+| 使用例 | マウス位置追跡、データ取得ロジック | 認証、ログ記録、データフェッチング |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🔄 カスタムフック vs コンテキスト+リデューサー vs コンテナ/プレゼンテーショナル
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| 特徴 | Custom Hooks | Context + Reducer | Container/Presentational |
+|------|-------------|-------------------|--------------------------|
+| スコープ | コンポーネント内の再利用可能なロジック | アプリケーション全体またはセクション | コンポーネントレベルの関心の分離 |
+| 状態管理 | ローカル状態またはグローバル状態へのアクセス | グローバルまたはセクション状態 | コンテナが状態を管理、プレゼンテーショナルはUI表示のみ |
+| ユースケース | フォーム処理、データ取得、副作用管理 | 複雑な状態更新、多コンポーネント間の状態共有 | UIとロジックの明確な分離 |
+| メンテナンス | 高い再利用性と分離性 | 状態遷移の明示性と予測可能性 | 明確な責任分担、UIの再利用性 |
+| テスト容易性 | ロジックを分離してテスト可能 | リデューサー関数は純粋関数としてテスト可能 | プレゼンテーショナルコンポーネントは純粋関数としてテスト可能 |
 
-### `npm run eject`
+### 🔄 ポータル vs 通常のコンポーネントレンダリング
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+| 特徴 | React Portal | 通常のレンダリング |
+|------|-------------|-----------------|
+| レンダリング先 | DOM階層の任意の場所 | 親コンポーネント内 |
+| ユースケース | モーダル、ツールチップ、ドロップダウン | 標準のUIコンポーネント |
+| スタイリング | 親コンポーネントのスタイルの影響を受けない | 親コンポーネントのスタイルの影響を受ける |
+| イベント伝播 | Reactのイベントシステムは維持される | 通常のReactイベント伝播 |
+| z-indexの問題 | 回避可能 | スタッキングコンテキストに依存 |
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 🔄 状態マシン vs 通常の状態管理
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+| 特徴 | State Machines | 従来の状態管理 (useState/useReducer) |
+|------|---------------|-----------------------------------|
+| 状態定義 | 明示的な状態と遷移の定義 | 暗黙的な状態管理 |
+| 予測可能性 | 高い（不正な状態遷移を防止） | 条件分岐の複雑さに依存 |
+| 複雑性 | 初期設定が複雑だが長期的に管理しやすい | 単純なケースでは簡単だが、複雑なケースで管理が難しくなる |
+| 可視化 | 状態図として可視化可能 | 可視化が難しい |
+| 適用例 | 複雑なフォームフロー、ワークフロー管理 | シンプルなトグル、カウンター、フォーム |
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### 🔄 制御コンポーネント vs 非制御コンポーネント
 
-## Learn More
+| 特徴 | Controlled Components | Uncontrolled Components |
+|------|---------------------|------------------------|
+| 状態管理 | Reactの状態で管理 | DOMに委任 |
+| 値へのアクセス | あらゆる時点で即時アクセス可能 | 必要な時点（主に送信時）のみアクセス |
+| フォーム検証 | リアルタイム検証が容易 | 送信時の検証が一般的 |
+| コード量 | 比較的多い | 比較的少ない |
+| パフォーマンス | 入力ごとの再レンダリングのコスト | 再レンダリングが少ない |
+| 適用例 | 動的フォーム、即時フィードバック | 単純なフォーム、ファイルアップロード |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## どのパターンを選ぶべきか？
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### ✅ Component Composition が適しているケース
 
+- レイアウトや汎用的なコンポーネントを作成するとき
+- Props でデータを渡してカスタマイズしやすくしたいとき
+- シンプルな設計で、コンテキストを使う必要がない場合
+- 例: Layout, Card, Modal, Button
 
-## デザインパターンをやっていく。
+### ✅ Compound Components が適しているケース
+
+- 関連するコンポーネント群をまとめて直感的なAPIを提供したいとき
+- 子コンポーネント間で状態を共有する必要があるとき
+- HTMLのような宣言的な構文で使いやすくしたいとき
+- 例: Tabs, Accordion, Form, Select, Menu
+
+### ✅ Render Props が適しているケース
+
+- ロジックと表示を明確に分離したいとき
+- 同じロジックを様々な表示方法で再利用したいとき
+- 動的に表示内容を決定する必要があるとき
+- 例: DataFetcher, MouseTracker, WindowSize
+
+### ✅ Custom Hooks が適しているケース
+
+- UIから完全に独立したロジックを抽出したいとき
+- 同じロジックを複数のコンポーネントで再利用したいとき
+- コンポーネントをシンプルに保ちたいとき
+- 例: useForm, useApi, useLocalStorage
+
+### ✅ Context + Reducer が適しているケース
+
+- 複雑なアプリケーション状態を管理する必要があるとき
+- 複数のコンポーネント間で状態を共有する必要があるとき
+- 状態更新のロジックが複雑なとき
+- 例: ShoppingCart, Authentication, Theme
+
+### ✅ Container/Presentational が適しているケース
+
+- ロジックとUIを明確に分離したいとき
+- UIコンポーネントを様々なデータソースで再利用したいとき
+- テスト容易性を高めたいとき
+- 例: UserList, ProductTable, Dashboard
+
+### ✅ Higher-Order Components が適しているケース
+
+- 横断的関心事（認証、ログ記録など）を分離したいとき
+- 既存のコンポーネントに機能を追加したいとき
+- プロップの注入によるコンポーネント拡張をしたいとき
+- 例: withAuth, withData, withTheme
+
+### ✅ React Portal が適しているケース
+
+- モーダル、ダイアログ、ツールチップを実装するとき
+- 親コンポーネントのスタイル制約から脱却する必要があるとき
+- z-indexの問題を解決したいとき
+- 例: Modal, Dialog, Tooltip, Dropdown
+
+### ✅ State Machines が適しているケース
+
+- 複雑なUIの状態遷移を管理するとき
+- マルチステップフォームやウィザードを実装するとき
+- 不正な状態遷移を防止したいとき
+- 例: CheckoutFlow, FormWizard, Authentication
+
+### ✅ Controlled vs Uncontrolled の選択基準
+
+- **制御コンポーネントを選ぶとき**:
+    - リアルタイムでのバリデーションやフィードバックが必要
+    - 入力に基づいてUIを動的に変更する必要がある
+    - フォームの状態を完全に把握・制御したい
+
+- **非制御コンポーネントを選ぶとき**:
+    - シンプルなフォームで送信時のみ値にアクセスしたい
+    - ファイルアップロードのような特殊な入力を扱う
+    - パフォーマンスが重要な大規模フォームを実装する
+
+## 詳細な説明とサンプルコード
+
+各パターンの詳細な説明、サンプルコード、実践的なユースケースについては、それぞれのディレクトリを参照してください。
